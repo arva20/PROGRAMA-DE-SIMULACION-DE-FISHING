@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Evaluación de Phishing — Huanchaquito</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#f5f5f5;color:#1a1a1a;min-height:100vh;padding:1rem}
+.app{max-width:680px;margin:0 auto}
+.card{background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.screen{display:none}.screen.active{display:block}
+h2{font-size:18px;font-weight:600;margin-bottom:.75rem}
+h3{font-size:15px;font-weight:600;margin-bottom:.5rem}
+p{font-size:14px;color:#555;line-height:1.6;margin-bottom:.75rem}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;margin-bottom:.75rem}
+.badge-info{background:#e8f0fe;color:#1a73e8}
+.badge-success{background:#e6f4ea;color:#1e7e34}
+.badge-danger{background:#fce8e6;color:#c5221f}
+.badge-warning{background:#fef7e0;color:#b45309}
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:1rem}
+.metric{background:#f8f9fa;border-radius:10px;padding:.75rem 1rem;text-align:center;border:1px solid #e0e0e0}
+.metric-label{font-size:12px;color:#888;margin-bottom:4px}
+.metric-val{font-size:24px;font-weight:700}
+.d{color:#c5221f}.s{color:#1e7e34}.i{color:#1a73e8}
+.btn{padding:9px 20px;border-radius:8px;border:1px solid #ccc;background:#fff;color:#333;font-size:14px;cursor:pointer;margin-right:8px;margin-bottom:8px;transition:background .15s}
+.btn:hover{background:#f0f0f0}
+.btn-p{background:#1a73e8;color:#fff;border-color:#1a73e8}
+.btn-p:hover{background:#1558b0}
+.btn-d{background:#fce8e6;color:#c5221f;border-color:#f5c6c4}
+.btn-d:hover{background:#f5c6c4}
+.input-row{display:flex;flex-direction:column;gap:4px;margin-bottom:1rem}
+.input-row label{font-size:13px;color:#555;font-weight:500}
+.input-row input{padding:9px 12px;border-radius:8px;border:1px solid #ccc;font-size:14px;color:#1a1a1a}
+.input-row input:focus{outline:none;border-color:#1a73e8}
+.qopt{display:block;width:100%;text-align:left;padding:10px 14px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#1a1a1a;font-size:14px;cursor:pointer;margin-bottom:6px;transition:background .1s}
+.qopt:hover:not(:disabled){background:#f0f0f0}
+.qopt.ok{background:#e6f4ea;color:#1e7e34;border-color:#a8d5b0}
+.qopt.no{background:#fce8e6;color:#c5221f;border-color:#f5c6c4}
+.qopt:disabled{opacity:.6;cursor:not-allowed}
+.fb{padding:9px 12px;border-radius:8px;font-size:13px;margin:6px 0 8px;border-left:3px solid}
+.fb.ok{background:#e6f4ea;color:#1e7e34;border-color:#1e7e34}
+.fb.no{background:#fce8e6;color:#c5221f;border-color:#c5221f}
+.tbar{height:4px;background:#e0e0e0;border-radius:2px;overflow:hidden;margin:8px 0 2px}
+.tfill{height:100%;border-radius:2px;background:#1a73e8;transition:width .1s linear}
+.nav-admin{display:flex;gap:6px;margin-bottom:1.25rem;flex-wrap:wrap}
+.nb{padding:7px 16px;border:1px solid #ccc;border-radius:8px;background:#fff;color:#555;font-size:13px;cursor:pointer;transition:background .15s}
+.nb.active,.nb:hover{background:#f0f0f0;color:#1a1a1a;border-color:#aaa}
+.nb.active{font-weight:600}
+.drow{display:grid;grid-template-columns:1fr 1fr 80px 55px 80px;gap:8px;padding:9px 0;border-bottom:1px solid #eee;font-size:13px;align-items:center}
+.drow.head{font-weight:600;color:#888;font-size:12px}
+.chart-wrap{position:relative;width:100%;height:200px;margin:.75rem 0}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.err{color:#c5221f;font-size:13px;margin-top:4px}
+.link-box{font-family:monospace;font-size:12px;background:#f8f9fa;padding:9px 12px;border-radius:8px;border:1px solid #ddd;word-break:break-all;color:#1a73e8;margin-bottom:.75rem}
+.email-wrap{border:1px solid #ddd;border-radius:10px;overflow:hidden;margin-bottom:1rem;font-size:13px}
+.email-head{background:#f8f9fa;padding:.75rem 1rem;border-bottom:1px solid #eee}
+.ef{display:flex;gap:8px;margin-bottom:3px}
+.ef span:first-child{color:#888;min-width:55px;font-weight:600}
+.email-body{padding:1rem;line-height:1.8;background:#fff}
+textarea{padding:10px;border-radius:8px;border:1px solid #ccc;font-size:14px;font-family:system-ui,sans-serif;width:100%;resize:vertical;color:#1a1a1a}
+textarea:focus{outline:none;border-color:#1a73e8}
+.srow{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid #eee}
+.srow:last-child{border:none}
+.stag{font-size:12px;padding:2px 10px;border-radius:20px;white-space:nowrap;font-weight:600}
+.stag.clic{background:#fce8e6;color:#c5221f}
+.stag.safe{background:#e6f4ea;color:#1e7e34}
+.pbar{height:8px;background:#e0e0e0;border-radius:4px;overflow:hidden;margin-bottom:4px}
+.pf{height:100%;border-radius:4px}
+.pf-d{background:#c5221f}.pf-s{background:#1e7e34}.pf-i{background:#1a73e8}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- PORTADA -->
+<div id="s-portada" class="screen active">
+  <div class="card" style="text-align:center;padding:2.5rem 1.25rem;margin-top:2rem">
+    <div style="font-size:48px;margin-bottom:.75rem">🛡️</div>
+    <h2>Sistema de Evaluación de Phishing</h2>
+    <p style="margin-bottom:1.5rem">Municipalidad del Centro Poblado de Huanchaquito — 2026</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-p" onclick="goEval()">👤 Soy evaluado</button>
+      <button class="btn" onclick="goAdmin()">🔒 Panel administrador</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="s-login" class="screen">
+  <div class="card" style="max-width:360px;margin:2rem auto">
+    <h2>🔒 Acceso administrador</h2>
+    <div class="input-row"><label>Contraseña</label><input type="password" id="pwd" placeholder="Contraseña" onkeydown="if(event.key==='Enter')checkPwd()"></div>
+    <div id="pwd-err" class="err" style="display:none">Contraseña incorrecta</div>
+    <button class="btn btn-p" onclick="checkPwd()">Ingresar</button>
+    <button class="btn" onclick="show('portada')">Volver</button>
+    <p style="font-size:12px;margin-top:.75rem;color:#888">Contraseña por defecto: <strong>admin2026</strong></p>
+  </div>
+</div>
+
+<!-- REGISTRO -->
+<div id="s-reg" class="screen">
+  <div class="badge badge-info">Evaluación</div>
+  <div class="card">
+    <h2>Bienvenido</h2>
+    <p>Completa tus datos para comenzar.</p>
+    <div class="two-col">
+      <div class="input-row"><label>Nombre completo</label><input type="text" id="ev-nom" placeholder="Ej: Juan Pérez"></div>
+      <div class="input-row"><label>Área de trabajo</label><input type="text" id="ev-area" placeholder="Ej: Secretaría"></div>
+    </div>
+    <div id="reg-err" class="err" style="display:none">Completa todos los campos</div>
+    <button class="btn btn-p" onclick="startQuiz()">Comenzar →</button>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="s-quiz" class="screen">
+  <div class="badge badge-info">Evaluación</div>
+  <div id="quiz-body"></div>
+</div>
+
+<!-- SIMULACIÓN -->
+<div id="s-sim" class="screen">
+  <div class="card">
+    <div class="email-wrap">
+      <div class="email-head">
+        <div class="ef"><span>De:</span><span>Soporte SUNAT &lt;notificaciones@sunat-gob-pe.com&gt;</span></div>
+        <div class="ef"><span>Para:</span><span>personal@municipalidad-huanchaquito.gob.pe</span></div>
+        <div class="ef"><span>Asunto:</span><span>⚠️ URGENTE: Deuda tributaria pendiente — riesgo de embargo</span></div>
+      </div>
+      <div class="email-body">
+        Estimado contribuyente,<br><br>
+        Se ha detectado una deuda tributaria de <strong>S/ 4,280</strong> a nombre de su institución. Debe regularizar su situación <strong>antes de las 5:00 pm de hoy</strong> o se procederá al embargo de cuentas.<br><br>
+        <a id="plink" href="#" onclick="linkClick(event)" style="color:#1a73e8;text-decoration:underline;cursor:pointer">Haga clic aquí para regularizar su deuda — SUNAT Perú</a><br><br>
+        Atentamente,<br>División de Cobranzas — SUNAT
+      </div>
+    </div>
+    <textarea id="sim-txt" rows="3" placeholder="Comentario"></textarea>
+    <div style="margin-top:.75rem"><button class="btn btn-p" onclick="submitSim()">Enviar</button></div>
+  </div>
+</div>
+
+<!-- FIN -->
+<div id="s-fin" class="screen">
+  <div class="card" style="text-align:center;padding:2rem">
+    <div style="font-size:48px;margin-bottom:.75rem">✅</div>
+    <h2>Completado</h2>
+    <p>Gracias por participar.</p>
+    <button class="btn" onclick="show('portada')">Volver al inicio</button>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="s-admin" class="screen">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:8px">
+    <div><div class="badge badge-success">Administrador</div><h2 style="margin-bottom:0">Dashboard</h2></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-d" id="btn-reset" style="font-size:13px">🗑 Resetear todo</button>
+      <button class="btn" onclick="show('portada')" style="font-size:13px">Salir</button>
+    </div>
+  </div>
+  <div class="nav-admin">
+    <button class="nb active" id="nb-resumen" onclick="adminTab('resumen')">📊 Resumen</button>
+    <button class="nb" id="nb-ind" onclick="adminTab('ind')">👥 Individuales</button>
+    <button class="nb" id="nb-sim" onclick="adminTab('sim')">🎣 Simulación</button>
+    <button class="nb" id="nb-cfg" onclick="adminTab('cfg')">🔗 Configurar link</button>
+  </div>
+  <div id="tab-resumen">
+    <div id="metrics"></div>
+    <div class="card"><h3>Puntajes del quiz</h3><div class="chart-wrap"><canvas id="qChart"></canvas></div></div>
+    <div class="card"><h3>Clic en el link</h3><div class="chart-wrap"><canvas id="sChart"></canvas></div></div>
+  </div>
+  <div id="tab-ind" style="display:none">
+    <div class="card">
+      <h3>Resultados individuales</h3>
+      <div class="drow head"><span>Nombre</span><span>Área</span><span>Nivel</span><span>Quiz</span><span>Link</span></div>
+      <div id="tabla"></div>
+      <p id="tabla-empty" style="display:none;font-size:13px;color:#888;margin-top:.5rem">Sin evaluados aún.</p>
+    </div>
+  </div>
+  <div id="tab-sim" style="display:none">
+    <div class="card"><h3>Comentarios del personal</h3><div id="sim-det"></div><p id="sim-empty" style="display:none;font-size:13px;color:#888">Sin datos aún.</p></div>
+    <div class="card"><h3>Nivel de riesgo</h3><div id="riesgo"></div></div>
+  </div>
+  <div id="tab-cfg" style="display:none">
+    <div class="card">
+      <h3>🔗 Link del correo phishing</h3>
+      <p>Cada simulación con Zphisher genera un link nuevo. Pégalo aquí y se actualiza automáticamente en el correo del evaluado.</p>
+      <div id="link-actual"></div>
+      <div class="input-row"><label>Nuevo link (generado por Zphisher)</label><input type="text" id="new-link" placeholder="https://abc123.trycloudflare.com"></div>
+      <button class="btn btn-p" onclick="saveLink()">Guardar link</button>
+      <div id="link-ok" class="fb ok" style="display:none;margin-top:.5rem">✅ Link actualizado correctamente.</div>
+    </div>
+    <div class="card">
+      <h3>Cómo obtener el link de Zphisher</h3>
+      <div style="background:#f8f9fa;border-radius:8px;padding:1rem;font-size:13px;line-height:2;border:1px solid #eee">
+        <strong>1.</strong> Ejecuta Zphisher en tu terminal (Linux / Termux / WSL)<br>
+        <strong>2.</strong> Selecciona la plantilla que quieras usar<br>
+        <strong>3.</strong> Elige el túnel: <strong>Cloudflare</strong> o <strong>LocalXpose</strong><br>
+        <strong>4.</strong> Copia el link que genera, ej: <code style="background:#fff;padding:2px 6px;border-radius:4px">https://abc123.trycloudflare.com</code><br>
+        <strong>5.</strong> Pégalo arriba y guarda
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+var DB={records:[],link:'https://TU-LINK-ZPHISHER.trycloudflare.com'};
+var ev={};var cQ=0;var tInt=null;var qCh=null,sCh=null;
+
+// Cargar desde localStorage si existe
+(function(){try{var d=localStorage.getItem('phishing_hq');if(d){var p=JSON.parse(d);DB.records=p.records||[];DB.link=p.link||DB.link;}}catch(e){}})();
+
+function saveDB(){try{localStorage.setItem('phishing_hq',JSON.stringify(DB));}catch(e){}}
+
+var QS=[
+  {q:'Recibes un correo: "Tu cuenta será bloqueada en 2 horas". ¿Qué haces?',
+   opts:['Hago clic en el enlace inmediatamente','Llamo al área de sistemas para verificar','Reenvío a mis compañeros','Respondo pidiendo más info'],
+   c:1,exp:'La urgencia artificial es la táctica principal del phishing. Siempre verificar por otro canal antes de hacer clic.'},
+  {q:'El remitente aparece como "Municipalidad Huanchaco" pero el correo es soporte@muni-login.xyz. ¿Es seguro?',
+   opts:['Sí, dice Municipalidad Huanchaco','No, el dominio no es .gob.pe','Solo si tiene candado HTTPS','Depende del contenido'],
+   c:1,exp:'El nombre visible puede ser falso. El dominio real es lo que importa. Los oficiales terminan en .gob.pe'},
+  {q:'Un vecino pide por Facebook que confirmes su DNI para un trámite. ¿Qué haces?',
+   opts:['Se lo envío si la página parece oficial','Le pido que venga presencialmente al local','Le pido su celular primero','Busco su DNI y se lo confirmo por mensaje'],
+   c:1,exp:'Nunca compartir datos personales por redes sociales. Siempre atención presencial o canal oficial.'},
+  {q:'¿Qué hace sospechoso este link? https://municipalidad.tramites-login.xyz/acceso',
+   opts:['Usa HTTPS (eso es peligroso)','El dominio es tramites-login.xyz, no gob.pe','Es muy largo','No tiene www.'],
+   c:1,exp:'El dominio principal es lo más importante. Los trámites oficiales usan .gob.pe únicamente.'}
+];
+
+function show(s){document.querySelectorAll('.screen').forEach(function(x){x.classList.remove('active');});document.getElementById('s-'+s).classList.add('active');}
+function goAdmin(){show('login');document.getElementById('pwd-err').style.display='none';document.getElementById('pwd').value='';}
+function goEval(){ev={nombre:'',area:'',answers:[],simTexto:'',clicked:false,score:0};cQ=0;document.getElementById('ev-nom').value='';document.getElementById('ev-area').value='';document.getElementById('reg-err').style.display='none';show('reg');}
+function checkPwd(){if(document.getElementById('pwd').value==='admin2026'){show('admin');renderAdmin();adminTab('resumen');}else{document.getElementById('pwd-err').style.display='block';}}
+
+function startQuiz(){
+  var n=document.getElementById('ev-nom').value.trim();
+  var a=document.getElementById('ev-area').value.trim();
+  if(!n||!a){document.getElementById('reg-err').style.display='block';return;}
+  ev={nombre:n,area:a,answers:[],simTexto:'',clicked:false,score:0};cQ=0;show('quiz');renderQ();
+}
+
+function renderQ(){
+  if(tInt){clearInterval(tInt);tInt=null;}
+  var q=QS[cQ];
+  var html='<div class="card"><p style="font-size:12px;color:#888;margin-bottom:.5rem">Pregunta '+(cQ+1)+' de '+QS.length+'</p><h3>'+q.q+'</h3><div style="margin-top:.75rem">';
+  for(var i=0;i<q.opts.length;i++){html+='<button class="qopt" id="qo'+i+'" onclick="ansQ('+i+')">'+q.opts[i]+'</button>';}
+  html+='</div><div id="qfb" style="display:none"></div><div class="tbar" id="tbar" style="display:none"><div class="tfill" id="tfill" style="width:100%"></div></div><div id="ttxt" style="font-size:12px;color:#888;text-align:right;margin-top:4px;display:none"></div></div>';
+  document.getElementById('quiz-body').innerHTML=html;
+}
+
+function ansQ(idx){
+  var q=QS[cQ];var ok=(idx===q.c);
+  document.querySelectorAll('.qopt').forEach(function(b){b.disabled=true;});
+  document.getElementById('qo'+idx).className='qopt '+(ok?'ok':'no');
+  if(!ok)document.getElementById('qo'+q.c).className='qopt ok';
+  if(ok)ev.score++;
+  ev.answers.push({q:cQ,chosen:idx,correct:ok});
+  var fb=document.getElementById('qfb');fb.style.display='block';
+  fb.innerHTML='<div class="fb '+(ok?'ok':'no')+'"><strong>'+(ok?'✅ Correcto':'❌ Incorrecto')+'</strong> — '+q.exp+'</div>';
+  document.getElementById('tbar').style.display='block';document.getElementById('ttxt').style.display='block';
+  var secs=5;document.getElementById('ttxt').textContent='Continuando en '+secs+'s...';
+  tInt=setInterval(function(){secs--;document.getElementById('tfill').style.width=(secs/5*100)+'%';document.getElementById('ttxt').textContent='Continuando en '+secs+'s...';if(secs<=0){clearInterval(tInt);tInt=null;if(cQ<QS.length-1){cQ++;renderQ();}else{goSim();}}},1000);
+}
+
+function goSim(){ev.clicked=false;document.getElementById('plink').href=DB.link;document.getElementById('sim-txt').value='';show('sim');}
+function linkClick(e){e.preventDefault();ev.clicked=true;if(DB.link&&DB.link!=='#')window.open(DB.link,'_blank');}
+function submitSim(){
+  ev.simTexto=document.getElementById('sim-txt').value.trim()||'(sin comentario)';
+  DB.records.push({nombre:ev.nombre,area:ev.area,score:ev.score,simTexto:ev.simTexto,clicked:ev.clicked,fecha:new Date().toLocaleDateString('es-PE')});
+  saveDB();show('fin');
+}
+
+function adminTab(t){
+  ['resumen','ind','sim','cfg'].forEach(function(x){document.getElementById('tab-'+x).style.display=x===t?'block':'none';document.getElementById('nb-'+x).classList.toggle('active',x===t);});
+  if(t==='resumen')buildCharts();if(t==='cfg')renderCfg();
+}
+
+function renderAdmin(){
+  var data=DB.records;var total=data.length;
+  var avg=total?Math.round(data.reduce(function(s,d){return s+d.score;},0)/total*10)/10:0;
+  var clics=data.filter(function(d){return d.clicked;}).length;
+  var tasa=total?Math.round(clics/total*100):0;
+  document.getElementById('metrics').innerHTML='<div class="metric-grid"><div class="metric"><div class="metric-label">Evaluados</div><div class="metric-val i">'+total+'</div></div><div class="metric"><div class="metric-label">Promedio quiz</div><div class="metric-val '+(avg>=3?'s':avg>=2?'i':'d')+'">'+avg+'/4</div></div><div class="metric"><div class="metric-label">Tasa de clic</div><div class="metric-val '+(tasa>50?'d':tasa>25?'i':'s')+'">'+tasa+'%</div></div><div class="metric"><div class="metric-label">Hicieron clic</div><div class="metric-val d">'+clics+'</div></div></div>';
+  renderTabla();renderSimDet();
+}
+
+function renderTabla(){
+  var data=DB.records;var el=document.getElementById('tabla');var em=document.getElementById('tabla-empty');
+  if(!data.length){el.innerHTML='';em.style.display='block';return;}em.style.display='none';
+  el.innerHTML=data.map(function(d){
+    var nv=d.score>=3?'<span class="badge badge-success" style="margin:0;padding:2px 8px">Alto</span>':d.score>=2?'<span class="badge badge-warning" style="margin:0;padding:2px 8px">Medio</span>':'<span class="badge badge-danger" style="margin:0;padding:2px 8px">Bajo</span>';
+    var cl=d.clicked?'<span class="stag clic">Clic</span>':'<span class="stag safe">No clic</span>';
+    return '<div class="drow"><span style="font-weight:600">'+d.nombre+'</span><span style="color:#888;font-size:12px">'+d.area+'</span><span>'+nv+'</span><span>'+d.score+'/4</span><span>'+cl+'</span></div>';
+  }).join('');
+}
+
+function renderSimDet(){
+  var data=DB.records;var el=document.getElementById('sim-det');var em=document.getElementById('sim-empty');var rb=document.getElementById('riesgo');
+  if(!data.length){el.innerHTML='';em.style.display='block';if(rb)rb.innerHTML='';return;}em.style.display='none';
+  el.innerHTML=data.map(function(d){var cl=d.clicked?'<span class="stag clic">Hizo clic</span>':'<span class="stag safe">No hizo clic</span>';return '<div class="srow"><div style="flex:1"><strong>'+d.nombre+'</strong> <span style="font-size:12px;color:#888">— '+d.area+'</span><br><span style="font-size:13px;color:#888;font-style:italic">"'+d.simTexto+'"</span></div>'+cl+'</div>';}).join('');
+  var clics=data.filter(function(d){return d.clicked;}).length;var pct=Math.round(clics/data.length*100);
+  var nivel=pct>60?'Crítico':pct>30?'Alto':pct>10?'Moderado':'Bajo';var col=pct>30?'pf-d':pct>10?'pf-i':'pf-s';
+  if(rb)rb.innerHTML='<p style="font-size:13px;color:#555;margin-bottom:6px">Tasa de clic: <strong>'+pct+'% — Nivel '+nivel+'</strong></p><div class="pbar"><div class="pf '+col+'" style="width:'+pct+'%"></div></div>';
+}
+
+function buildCharts(){
+  var data=DB.records;var scores=[0,1,2,3,4].map(function(s){return data.filter(function(d){return d.score===s;}).length;});
+  var clics=data.filter(function(d){return d.clicked;}).length;var noclics=data.length-clics;
+  if(qCh){qCh.destroy();qCh=null;}if(sCh){sCh.destroy();sCh=null;}
+  var c1=document.getElementById('qChart');if(c1)qCh=new Chart(c1,{type:'bar',data:{labels:['0/4','1/4','2/4','3/4','4/4'],datasets:[{label:'Personas',data:scores,backgroundColor:'#1a73e8'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}});
+  var c2=document.getElementById('sChart');if(c2)sCh=new Chart(c2,{type:'doughnut',data:{labels:['Hicieron clic','No hicieron clic'],datasets:[{data:[clics,noclics],backgroundColor:['#c5221f','#1e7e34']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
+}
+
+function renderCfg(){document.getElementById('link-actual').innerHTML='<p style="font-size:13px;color:#555;margin-bottom:4px">Link actual:</p><div class="link-box">'+DB.link+'</div>';document.getElementById('link-ok').style.display='none';document.getElementById('new-link').value='';}
+function saveLink(){var v=document.getElementById('new-link').value.trim();if(!v)return;DB.link=v;saveDB();renderCfg();document.getElementById('link-ok').style.display='block';setTimeout(function(){document.getElementById('link-ok').style.display='none';},3000);}
+
+document.getElementById('btn-reset').addEventListener('click',function(){
+  if(!confirm('¿Borrar TODOS los datos registrados?\nEsta acción no se puede deshacer.'))return;
+  DB.records=[];DB.link='https://TU-LINK-ZPHISHER.trycloudflare.com';
+  try{localStorage.removeItem('phishing_hq');}catch(e){}
+  if(qCh){qCh.destroy();qCh=null;}if(sCh){sCh.destroy();sCh=null;}
+  renderAdmin();adminTab('resumen');
+  alert('✅ Sistema reseteado correctamente. Todos los datos fueron eliminados.');
+});
+</script>
+</body>
+</html>
