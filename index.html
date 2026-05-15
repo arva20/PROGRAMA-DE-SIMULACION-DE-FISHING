@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sistema de Evaluación de Phishing — Huanchaquito</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,sans-serif;background:#f5f5f5;color:#1a1a1a;min-height:100vh;padding:1rem}
@@ -29,12 +28,10 @@ p{font-size:14px;color:#555;line-height:1.6;margin-bottom:.75rem}
 .btn-p{background:#1a73e8;color:#fff;border-color:#1a73e8}
 .btn-p:hover{background:#1558b0}
 .btn-d{background:#fce8e6;color:#c5221f;border-color:#f5c6c4}
-.btn-d:hover{background:#f5c6c4}
 .input-row{display:flex;flex-direction:column;gap:4px;margin-bottom:1rem}
 .input-row label{font-size:13px;color:#555;font-weight:500}
-.input-row input{padding:9px 12px;border-radius:8px;border:1px solid #ccc;font-size:14px;color:#1a1a1a}
-.input-row input:focus{outline:none;border-color:#1a73e8}
-.qopt{display:block;width:100%;text-align:left;padding:10px 14px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#1a1a1a;font-size:14px;cursor:pointer;margin-bottom:6px;transition:background .1s}
+.input-row input{padding:9px 12px;border-radius:8px;border:1px solid #ccc;font-size:14px}
+.qopt{display:block;width:100%;text-align:left;padding:10px 14px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#1a1a1a;font-size:14px;cursor:pointer;margin-bottom:6px}
 .qopt:hover:not(:disabled){background:#f0f0f0}
 .qopt.ok{background:#e6f4ea;color:#1e7e34;border-color:#a8d5b0}
 .qopt.no{background:#fce8e6;color:#c5221f;border-color:#f5c6c4}
@@ -45,9 +42,8 @@ p{font-size:14px;color:#555;line-height:1.6;margin-bottom:.75rem}
 .tbar{height:4px;background:#e0e0e0;border-radius:2px;overflow:hidden;margin:8px 0 2px}
 .tfill{height:100%;border-radius:2px;background:#1a73e8;transition:width .1s linear}
 .nav-admin{display:flex;gap:6px;margin-bottom:1.25rem;flex-wrap:wrap}
-.nb{padding:7px 16px;border:1px solid #ccc;border-radius:8px;background:#fff;color:#555;font-size:13px;cursor:pointer;transition:background .15s}
-.nb.active,.nb:hover{background:#f0f0f0;color:#1a1a1a;border-color:#aaa}
-.nb.active{font-weight:600}
+.nb{padding:7px 16px;border:1px solid #ccc;border-radius:8px;background:#fff;color:#555;font-size:13px;cursor:pointer}
+.nb.active,.nb:hover{background:#f0f0f0;color:#1a1a1a;border-color:#aaa;font-weight:600}
 .drow{display:grid;grid-template-columns:1fr 1fr 80px 55px 80px;gap:8px;padding:9px 0;border-bottom:1px solid #eee;font-size:13px;align-items:center}
 .drow.head{font-weight:600;color:#888;font-size:12px}
 .chart-wrap{position:relative;width:100%;height:200px;margin:.75rem 0}
@@ -58,9 +54,8 @@ p{font-size:14px;color:#555;line-height:1.6;margin-bottom:.75rem}
 .email-head{background:#f8f9fa;padding:.75rem 1rem;border-bottom:1px solid #eee}
 .ef{display:flex;gap:8px;margin-bottom:3px}
 .ef span:first-child{color:#888;min-width:55px;font-weight:600}
-.email-body{padding:1rem;line-height:1.8;background:#fff}
-textarea{padding:10px;border-radius:8px;border:1px solid #ccc;font-size:14px;font-family:system-ui,sans-serif;width:100%;resize:vertical;color:#1a1a1a}
-textarea:focus{outline:none;border-color:#1a73e8}
+.email-body{padding:1rem;line-height:1.8}
+textarea{padding:10px;border-radius:8px;border:1px solid #ccc;font-size:14px;font-family:system-ui,sans-serif;width:100%;resize:vertical}
 .srow{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid #eee}
 .srow:last-child{border:none}
 .stag{font-size:12px;padding:2px 10px;border-radius:20px;white-space:nowrap;font-weight:600}
@@ -69,6 +64,7 @@ textarea:focus{outline:none;border-color:#1a73e8}
 .pbar{height:8px;background:#e0e0e0;border-radius:4px;overflow:hidden;margin-bottom:4px}
 .pf{height:100%;border-radius:4px}
 .pf-d{background:#c5221f}.pf-s{background:#1e7e34}.pf-i{background:#1a73e8}
+.loading{text-align:center;padding:2rem;color:#888;font-size:14px}
 </style>
 </head>
 <body>
@@ -95,7 +91,7 @@ textarea:focus{outline:none;border-color:#1a73e8}
     <div id="pwd-err" class="err" style="display:none">Contraseña incorrecta</div>
     <button class="btn btn-p" onclick="checkPwd()">Ingresar</button>
     <button class="btn" onclick="show('portada')">Volver</button>
-    <p style="font-size:12px;margin-top:.75rem;color:#888">Contraseña por defecto: <strong>admin2026</strong></p>
+    <p style="font-size:12px;margin-top:.75rem;color:#888">Contraseña: <strong>admin2026</strong></p>
   </div>
 </div>
 
@@ -156,6 +152,7 @@ textarea:focus{outline:none;border-color:#1a73e8}
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:8px">
     <div><div class="badge badge-success">Administrador</div><h2 style="margin-bottom:0">Dashboard</h2></div>
     <div style="display:flex;gap:8px">
+      <button class="btn" onclick="loadAdminData()" style="font-size:13px">🔄 Actualizar</button>
       <button class="btn btn-d" id="btn-reset" style="font-size:13px">🗑 Resetear todo</button>
       <button class="btn" onclick="show('portada')" style="font-size:13px">Salir</button>
     </div>
@@ -167,9 +164,9 @@ textarea:focus{outline:none;border-color:#1a73e8}
     <button class="nb" id="nb-cfg" onclick="adminTab('cfg')">🔗 Configurar link</button>
   </div>
   <div id="tab-resumen">
-    <div id="metrics"></div>
+    <div id="metrics"><div class="loading">Cargando datos...</div></div>
     <div class="card"><h3>Puntajes del quiz</h3><div class="chart-wrap"><canvas id="qChart"></canvas></div></div>
-    <div class="card"><h3>Clic en el link</h3><div class="chart-wrap"><canvas id="sChart"></canvas></div></div>
+    <div class="card"><h3>Clic en el link phishing</h3><div class="chart-wrap"><canvas id="sChart"></canvas></div></div>
   </div>
   <div id="tab-ind" style="display:none">
     <div class="card">
@@ -186,20 +183,19 @@ textarea:focus{outline:none;border-color:#1a73e8}
   <div id="tab-cfg" style="display:none">
     <div class="card">
       <h3>🔗 Link del correo phishing</h3>
-      <p>Cada simulación con Zphisher genera un link nuevo. Pégalo aquí y se actualiza automáticamente en el correo del evaluado.</p>
+      <p>Cada simulación con Zphisher genera un link nuevo. Pégalo aquí.</p>
       <div id="link-actual"></div>
       <div class="input-row"><label>Nuevo link (generado por Zphisher)</label><input type="text" id="new-link" placeholder="https://abc123.trycloudflare.com"></div>
       <button class="btn btn-p" onclick="saveLink()">Guardar link</button>
-      <div id="link-ok" class="fb ok" style="display:none;margin-top:.5rem">✅ Link actualizado correctamente.</div>
+      <div id="link-ok" class="fb ok" style="display:none;margin-top:.5rem">✅ Link actualizado.</div>
     </div>
     <div class="card">
-      <h3>Cómo obtener el link de Zphisher</h3>
+      <h3>Pasos para obtener el link de Zphisher</h3>
       <div style="background:#f8f9fa;border-radius:8px;padding:1rem;font-size:13px;line-height:2;border:1px solid #eee">
-        <strong>1.</strong> Ejecuta Zphisher en tu terminal (Linux / Termux / WSL)<br>
-        <strong>2.</strong> Selecciona la plantilla que quieras usar<br>
-        <strong>3.</strong> Elige el túnel: <strong>Cloudflare</strong> o <strong>LocalXpose</strong><br>
-        <strong>4.</strong> Copia el link que genera, ej: <code style="background:#fff;padding:2px 6px;border-radius:4px">https://abc123.trycloudflare.com</code><br>
-        <strong>5.</strong> Pégalo arriba y guarda
+        <strong>1.</strong> Ejecuta Zphisher en tu terminal<br>
+        <strong>2.</strong> Selecciona la plantilla (Gmail, SUNAT, etc.)<br>
+        <strong>3.</strong> Elige túnel: Cloudflare o LocalXpose<br>
+        <strong>4.</strong> Copia el link generado y pégalo arriba
       </div>
     </div>
   </div>
@@ -208,36 +204,50 @@ textarea:focus{outline:none;border-color:#1a73e8}
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<script>
-var DB={records:[],link:'https://TU-LINK-ZPHISHER.trycloudflare.com'};
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
+// ── FIREBASE CONFIG ────────────────────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyDJpGIlZvT4J9zSrVHnMLr1KioiJixvNAk",
+  authDomain: "simulacion-de-phishing.firebaseapp.com",
+  projectId: "simulacion-de-phishing",
+  storageBucket: "simulacion-de-phishing.firebasestorage.app",
+  messagingSenderId: "937877408567",
+  appId: "1:937877408567:web:344fa108c984104ea9e8b2"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ── ESTADO ─────────────────────────────────────────────────────────────────
 var ev={};var cQ=0;var tInt=null;var qCh=null,sCh=null;
-
-// Cargar desde localStorage si existe
-(function(){try{var d=localStorage.getItem('phishing_hq');if(d){var p=JSON.parse(d);DB.records=p.records||[];DB.link=p.link||DB.link;}}catch(e){}})();
-
-function saveDB(){try{localStorage.setItem('phishing_hq',JSON.stringify(DB));}catch(e){}}
+var cachedData=[];
 
 var QS=[
   {q:'Recibes un correo: "Tu cuenta será bloqueada en 2 horas". ¿Qué haces?',
    opts:['Hago clic en el enlace inmediatamente','Llamo al área de sistemas para verificar','Reenvío a mis compañeros','Respondo pidiendo más info'],
-   c:1,exp:'La urgencia artificial es la táctica principal del phishing. Siempre verificar por otro canal antes de hacer clic.'},
-  {q:'El remitente aparece como "Municipalidad Huanchaco" pero el correo es soporte@muni-login.xyz. ¿Es seguro?',
-   opts:['Sí, dice Municipalidad Huanchaco','No, el dominio no es .gob.pe','Solo si tiene candado HTTPS','Depende del contenido'],
-   c:1,exp:'El nombre visible puede ser falso. El dominio real es lo que importa. Los oficiales terminan en .gob.pe'},
+   c:1,exp:'La urgencia artificial es la táctica principal del phishing. Siempre verificar por otro canal.'},
+  {q:'El remitente dice "Municipalidad Huanchaco" pero el correo es soporte@muni-login.xyz. ¿Es seguro?',
+   opts:['Sí, dice Municipalidad Huanchaco','No, el dominio no es .gob.pe','Solo si tiene HTTPS','Depende del contenido'],
+   c:1,exp:'El nombre visible puede ser falso. El dominio real es lo que importa.'},
   {q:'Un vecino pide por Facebook que confirmes su DNI para un trámite. ¿Qué haces?',
-   opts:['Se lo envío si la página parece oficial','Le pido que venga presencialmente al local','Le pido su celular primero','Busco su DNI y se lo confirmo por mensaje'],
-   c:1,exp:'Nunca compartir datos personales por redes sociales. Siempre atención presencial o canal oficial.'},
+   opts:['Se lo envío si parece oficial','Le pido que venga presencialmente','Le pido su celular','Busco su DNI y se lo confirmo'],
+   c:1,exp:'Nunca datos personales por redes sociales. Siempre atención presencial.'},
   {q:'¿Qué hace sospechoso este link? https://municipalidad.tramites-login.xyz/acceso',
-   opts:['Usa HTTPS (eso es peligroso)','El dominio es tramites-login.xyz, no gob.pe','Es muy largo','No tiene www.'],
-   c:1,exp:'El dominio principal es lo más importante. Los trámites oficiales usan .gob.pe únicamente.'}
+   opts:['Usa HTTPS','El dominio es tramites-login.xyz, no gob.pe','Es muy largo','No tiene www.'],
+   c:1,exp:'El dominio principal es lo más importante. Los oficiales usan .gob.pe'}
 ];
 
-function show(s){document.querySelectorAll('.screen').forEach(function(x){x.classList.remove('active');});document.getElementById('s-'+s).classList.add('active');}
-function goAdmin(){show('login');document.getElementById('pwd-err').style.display='none';document.getElementById('pwd').value='';}
-function goEval(){ev={nombre:'',area:'',answers:[],simTexto:'',clicked:false,score:0};cQ=0;document.getElementById('ev-nom').value='';document.getElementById('ev-area').value='';document.getElementById('reg-err').style.display='none';show('reg');}
-function checkPwd(){if(document.getElementById('pwd').value==='admin2026'){show('admin');renderAdmin();adminTab('resumen');}else{document.getElementById('pwd-err').style.display='block';}}
+// ── NAVEGACIÓN ─────────────────────────────────────────────────────────────
+window.show=function(s){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById('s-'+s).classList.add('active');}
+window.goAdmin=function(){show('login');document.getElementById('pwd-err').style.display='none';document.getElementById('pwd').value='';}
+window.goEval=function(){ev={nombre:'',area:'',answers:[],simTexto:'',clicked:false,score:0};cQ=0;document.getElementById('ev-nom').value='';document.getElementById('ev-area').value='';document.getElementById('reg-err').style.display='none';show('reg');}
+window.checkPwd=function(){if(document.getElementById('pwd').value==='admin2026'){show('admin');loadAdminData();adminTab('resumen');}else{document.getElementById('pwd-err').style.display='block';}}
 
-function startQuiz(){
+// ── QUIZ ───────────────────────────────────────────────────────────────────
+window.startQuiz=function(){
   var n=document.getElementById('ev-nom').value.trim();
   var a=document.getElementById('ev-area').value.trim();
   if(!n||!a){document.getElementById('reg-err').style.display='block';return;}
@@ -253,9 +263,9 @@ function renderQ(){
   document.getElementById('quiz-body').innerHTML=html;
 }
 
-function ansQ(idx){
+window.ansQ=function(idx){
   var q=QS[cQ];var ok=(idx===q.c);
-  document.querySelectorAll('.qopt').forEach(function(b){b.disabled=true;});
+  document.querySelectorAll('.qopt').forEach(b=>b.disabled=true);
   document.getElementById('qo'+idx).className='qopt '+(ok?'ok':'no');
   if(!ok)document.getElementById('qo'+q.c).className='qopt ok';
   if(ok)ev.score++;
@@ -264,68 +274,134 @@ function ansQ(idx){
   fb.innerHTML='<div class="fb '+(ok?'ok':'no')+'"><strong>'+(ok?'✅ Correcto':'❌ Incorrecto')+'</strong> — '+q.exp+'</div>';
   document.getElementById('tbar').style.display='block';document.getElementById('ttxt').style.display='block';
   var secs=5;document.getElementById('ttxt').textContent='Continuando en '+secs+'s...';
-  tInt=setInterval(function(){secs--;document.getElementById('tfill').style.width=(secs/5*100)+'%';document.getElementById('ttxt').textContent='Continuando en '+secs+'s...';if(secs<=0){clearInterval(tInt);tInt=null;if(cQ<QS.length-1){cQ++;renderQ();}else{goSim();}}},1000);
+  tInt=setInterval(()=>{secs--;document.getElementById('tfill').style.width=(secs/5*100)+'%';document.getElementById('ttxt').textContent='Continuando en '+secs+'s...';if(secs<=0){clearInterval(tInt);tInt=null;if(cQ<QS.length-1){cQ++;renderQ();}else{goSim();}}},1000);
 }
 
-function goSim(){ev.clicked=false;document.getElementById('plink').href=DB.link;document.getElementById('sim-txt').value='';show('sim');}
-function linkClick(e){e.preventDefault();ev.clicked=true;if(DB.link&&DB.link!=='#')window.open(DB.link,'_blank');}
-function submitSim(){
+// ── SIMULACIÓN ─────────────────────────────────────────────────────────────
+function goSim(){
+  ev.clicked=false;
+  getDoc(doc(db,'config','phishing_link')).then(d=>{
+    document.getElementById('plink').href=d.exists()?d.data().url:'#';
+  }).catch(()=>{});
+  document.getElementById('sim-txt').value='';
+  show('sim');
+}
+
+window.linkClick=function(e){
+  e.preventDefault();ev.clicked=true;
+  var href=document.getElementById('plink').href;
+  if(href&&href!==window.location.href)window.open(href,'_blank');
+}
+
+window.submitSim=async function(){
   ev.simTexto=document.getElementById('sim-txt').value.trim()||'(sin comentario)';
-  DB.records.push({nombre:ev.nombre,area:ev.area,score:ev.score,simTexto:ev.simTexto,clicked:ev.clicked,fecha:new Date().toLocaleDateString('es-PE')});
-  saveDB();show('fin');
+  try{
+    await addDoc(collection(db,'evaluaciones'),{
+      nombre:ev.nombre, area:ev.area, score:ev.score,
+      simTexto:ev.simTexto, clicked:ev.clicked,
+      fecha:new Date().toLocaleDateString('es-PE'),
+      timestamp:new Date().toISOString()
+    });
+  }catch(e){console.error(e);}
+  show('fin');
 }
 
-function adminTab(t){
-  ['resumen','ind','sim','cfg'].forEach(function(x){document.getElementById('tab-'+x).style.display=x===t?'block':'none';document.getElementById('nb-'+x).classList.toggle('active',x===t);});
-  if(t==='resumen')buildCharts();if(t==='cfg')renderCfg();
+// ── ADMIN ──────────────────────────────────────────────────────────────────
+window.loadAdminData=async function(){
+  document.getElementById('metrics').innerHTML='<div class="loading">⏳ Cargando datos desde Firebase...</div>';
+  try{
+    var snap=await getDocs(collection(db,'evaluaciones'));
+    cachedData=[];
+    snap.forEach(d=>cachedData.push(d.data()));
+    renderAdmin();
+  }catch(e){
+    document.getElementById('metrics').innerHTML='<div class="loading" style="color:#c5221f">❌ Error al cargar. Verifica las reglas de Firestore.</div>';
+  }
 }
 
 function renderAdmin(){
-  var data=DB.records;var total=data.length;
-  var avg=total?Math.round(data.reduce(function(s,d){return s+d.score;},0)/total*10)/10:0;
-  var clics=data.filter(function(d){return d.clicked;}).length;
+  var data=cachedData;var total=data.length;
+  var avg=total?Math.round(data.reduce((s,d)=>s+d.score,0)/total*10)/10:0;
+  var clics=data.filter(d=>d.clicked).length;
   var tasa=total?Math.round(clics/total*100):0;
-  document.getElementById('metrics').innerHTML='<div class="metric-grid"><div class="metric"><div class="metric-label">Evaluados</div><div class="metric-val i">'+total+'</div></div><div class="metric"><div class="metric-label">Promedio quiz</div><div class="metric-val '+(avg>=3?'s':avg>=2?'i':'d')+'">'+avg+'/4</div></div><div class="metric"><div class="metric-label">Tasa de clic</div><div class="metric-val '+(tasa>50?'d':tasa>25?'i':'s')+'">'+tasa+'%</div></div><div class="metric"><div class="metric-label">Hicieron clic</div><div class="metric-val d">'+clics+'</div></div></div>';
-  renderTabla();renderSimDet();
+  document.getElementById('metrics').innerHTML=
+    '<div class="metric-grid">'+
+    '<div class="metric"><div class="metric-label">Evaluados</div><div class="metric-val i">'+total+'</div></div>'+
+    '<div class="metric"><div class="metric-label">Promedio quiz</div><div class="metric-val '+(avg>=3?'s':avg>=2?'i':'d')+'">'+avg+'/4</div></div>'+
+    '<div class="metric"><div class="metric-label">Tasa de clic</div><div class="metric-val '+(tasa>50?'d':tasa>25?'i':'s')+'">'+tasa+'%</div></div>'+
+    '<div class="metric"><div class="metric-label">Hicieron clic</div><div class="metric-val d">'+clics+'</div></div>'+
+    '</div>';
+  renderTabla(data);renderSimDet(data);buildCharts(data);
 }
 
-function renderTabla(){
-  var data=DB.records;var el=document.getElementById('tabla');var em=document.getElementById('tabla-empty');
+window.adminTab=function(t){
+  ['resumen','ind','sim','cfg'].forEach(x=>{
+    document.getElementById('tab-'+x).style.display=x===t?'block':'none';
+    document.getElementById('nb-'+x).classList.toggle('active',x===t);
+  });
+  if(t==='cfg')renderCfg();
+}
+
+function renderTabla(data){
+  var el=document.getElementById('tabla');var em=document.getElementById('tabla-empty');
   if(!data.length){el.innerHTML='';em.style.display='block';return;}em.style.display='none';
-  el.innerHTML=data.map(function(d){
+  el.innerHTML=data.map(d=>{
     var nv=d.score>=3?'<span class="badge badge-success" style="margin:0;padding:2px 8px">Alto</span>':d.score>=2?'<span class="badge badge-warning" style="margin:0;padding:2px 8px">Medio</span>':'<span class="badge badge-danger" style="margin:0;padding:2px 8px">Bajo</span>';
     var cl=d.clicked?'<span class="stag clic">Clic</span>':'<span class="stag safe">No clic</span>';
     return '<div class="drow"><span style="font-weight:600">'+d.nombre+'</span><span style="color:#888;font-size:12px">'+d.area+'</span><span>'+nv+'</span><span>'+d.score+'/4</span><span>'+cl+'</span></div>';
   }).join('');
 }
 
-function renderSimDet(){
-  var data=DB.records;var el=document.getElementById('sim-det');var em=document.getElementById('sim-empty');var rb=document.getElementById('riesgo');
+function renderSimDet(data){
+  var el=document.getElementById('sim-det');var em=document.getElementById('sim-empty');var rb=document.getElementById('riesgo');
   if(!data.length){el.innerHTML='';em.style.display='block';if(rb)rb.innerHTML='';return;}em.style.display='none';
-  el.innerHTML=data.map(function(d){var cl=d.clicked?'<span class="stag clic">Hizo clic</span>':'<span class="stag safe">No hizo clic</span>';return '<div class="srow"><div style="flex:1"><strong>'+d.nombre+'</strong> <span style="font-size:12px;color:#888">— '+d.area+'</span><br><span style="font-size:13px;color:#888;font-style:italic">"'+d.simTexto+'"</span></div>'+cl+'</div>';}).join('');
-  var clics=data.filter(function(d){return d.clicked;}).length;var pct=Math.round(clics/data.length*100);
+  el.innerHTML=data.map(d=>`<div class="srow"><div style="flex:1"><strong>${d.nombre}</strong> <span style="font-size:12px;color:#888">— ${d.area}</span><br><span style="font-size:13px;color:#888;font-style:italic">"${d.simTexto}"</span></div>${d.clicked?'<span class="stag clic">Hizo clic</span>':'<span class="stag safe">No hizo clic</span>'}</div>`).join('');
+  var clics=data.filter(d=>d.clicked).length;var pct=data.length?Math.round(clics/data.length*100):0;
   var nivel=pct>60?'Crítico':pct>30?'Alto':pct>10?'Moderado':'Bajo';var col=pct>30?'pf-d':pct>10?'pf-i':'pf-s';
-  if(rb)rb.innerHTML='<p style="font-size:13px;color:#555;margin-bottom:6px">Tasa de clic: <strong>'+pct+'% — Nivel '+nivel+'</strong></p><div class="pbar"><div class="pf '+col+'" style="width:'+pct+'%"></div></div>';
+  if(rb)rb.innerHTML=`<p style="font-size:13px;color:#555;margin-bottom:6px">Tasa de clic: <strong>${pct}% — Nivel ${nivel}</strong></p><div class="pbar"><div class="pf ${col}" style="width:${pct}%"></div></div>`;
 }
 
-function buildCharts(){
-  var data=DB.records;var scores=[0,1,2,3,4].map(function(s){return data.filter(function(d){return d.score===s;}).length;});
-  var clics=data.filter(function(d){return d.clicked;}).length;var noclics=data.length-clics;
+function buildCharts(data){
+  var scores=[0,1,2,3,4].map(s=>data.filter(d=>d.score===s).length);
+  var clics=data.filter(d=>d.clicked).length;var noclics=data.length-clics;
   if(qCh){qCh.destroy();qCh=null;}if(sCh){sCh.destroy();sCh=null;}
   var c1=document.getElementById('qChart');if(c1)qCh=new Chart(c1,{type:'bar',data:{labels:['0/4','1/4','2/4','3/4','4/4'],datasets:[{label:'Personas',data:scores,backgroundColor:'#1a73e8'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}});
   var c2=document.getElementById('sChart');if(c2)sCh=new Chart(c2,{type:'doughnut',data:{labels:['Hicieron clic','No hicieron clic'],datasets:[{data:[clics,noclics],backgroundColor:['#c5221f','#1e7e34']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
 }
 
-function renderCfg(){document.getElementById('link-actual').innerHTML='<p style="font-size:13px;color:#555;margin-bottom:4px">Link actual:</p><div class="link-box">'+DB.link+'</div>';document.getElementById('link-ok').style.display='none';document.getElementById('new-link').value='';}
-function saveLink(){var v=document.getElementById('new-link').value.trim();if(!v)return;DB.link=v;saveDB();renderCfg();document.getElementById('link-ok').style.display='block';setTimeout(function(){document.getElementById('link-ok').style.display='none';},3000);}
+// ── CONFIGURAR LINK ────────────────────────────────────────────────────────
+async function renderCfg(){
+  try{
+    var d=await getDoc(doc(db,'config','phishing_link'));
+    var url=d.exists()?d.data().url:'(sin link configurado)';
+    document.getElementById('link-actual').innerHTML='<p style="font-size:13px;color:#555;margin-bottom:4px">Link actual:</p><div class="link-box">'+url+'</div>';
+  }catch(e){}
+  document.getElementById('link-ok').style.display='none';
+  document.getElementById('new-link').value='';
+}
 
-document.getElementById('btn-reset').addEventListener('click',function(){
-  if(!confirm('¿Borrar TODOS los datos registrados?\nEsta acción no se puede deshacer.'))return;
-  DB.records=[];DB.link='https://TU-LINK-ZPHISHER.trycloudflare.com';
-  try{localStorage.removeItem('phishing_hq');}catch(e){}
-  if(qCh){qCh.destroy();qCh=null;}if(sCh){sCh.destroy();sCh=null;}
-  renderAdmin();adminTab('resumen');
-  alert('✅ Sistema reseteado correctamente. Todos los datos fueron eliminados.');
+window.saveLink=async function(){
+  var v=document.getElementById('new-link').value.trim();if(!v)return;
+  try{
+    await setDoc(doc(db,'config','phishing_link'),{url:v});
+    renderCfg();
+    document.getElementById('link-ok').style.display='block';
+    setTimeout(()=>document.getElementById('link-ok').style.display='none',3000);
+  }catch(e){alert('Error al guardar. Verifica las reglas de Firestore.');}
+}
+
+// ── RESETEAR ───────────────────────────────────────────────────────────────
+document.getElementById('btn-reset').addEventListener('click',async function(){
+  if(!confirm('¿Borrar TODOS los datos de Firebase?\nEsta acción no se puede deshacer.'))return;
+  try{
+    var snap=await getDocs(collection(db,'evaluaciones'));
+    var deletes=[];snap.forEach(d=>deletes.push(deleteDoc(doc(db,'evaluaciones',d.id))));
+    await Promise.all(deletes);
+    cachedData=[];
+    if(qCh){qCh.destroy();qCh=null;}if(sCh){sCh.destroy();sCh=null;}
+    renderAdmin();
+    alert('✅ Todos los datos fueron eliminados de Firebase.');
+  }catch(e){alert('Error al resetear: '+e.message);}
 });
 </script>
 </body>
